@@ -5,4 +5,4 @@
 
 A simple little plugin which allows your readers to share your posts on over 50 social networks.
 
-You can view a demo of this plugin at [deltatheme.com](https://deltatheme.com/bludit/aqua/)
+You can view a demo of this plugin at [320up.com](https://320up.com/demo/bludit/)

@@ -2,126 +2,118 @@
 
 class pluginAddToAny extends Plugin {
 
-	private $disable;
+        private $enable;
 
-	public function init()
-	{
-		$this->dbFields = array(
-			'enablePages'=>false,
-			'enablePosts'=>true,
-			'enableDefaultHomePage'=>false
-		);
-	}
+        private function a2acode()
+        {
+                $ret  = '<!-- AddToAny BEGIN -->
+                        <div class="a2a-social" style="margin:20px 0px;">
+                                <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+                                        <a class="a2a_button_facebook"></a>
+                                        <a class="a2a_button_twitter"></a>
+                                        <a class="a2a_button_google_plus"></a>
+                                        <a class="a2a_button_linkedin"></a>
+                                        <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+                                </div>
+                        </div>
+                        <script type="text/javascript">
+                        var a2a_config = a2a_config || {};
+                        a2a_config.icon_color = "unset";';
 
-	function __construct()
-	{
-		parent::__construct();
+                if ( $this->getDbField('enableMinifyURL') ) {
+                        $ret .='a2a_config.track_links = "googl";';
+                };
 
-		global $Url;
+                $ret .= '</script>
+                        <!-- AddToAny END -->';
 
-		// Disable the plugin IF ...
-		$this->disable = false;
+                return $ret;
+        }
 
-		if( (!$this->getDbField('enablePosts')) && ($Url->whereAmI()=='post') ) {
-			$this->disable = true;
-		}
-		elseif( (!$this->getDbField('enablePages')) && ($Url->whereAmI()=='page') ) {
-			$this->disable = true;
-		}
-		elseif( !$this->getDbField('enableDefaultHomePage') && ($Url->whereAmI()=='page') )
-		{
-			global $Page;
-			global $Site;
-			if( $Site->homePage()==$Page->key() ) {
-				$this->disable = true;
-			}
-		}
-		elseif( ($Url->whereAmI()!='post') && ($Url->whereAmI()!='page') ) {
-			$this->disable = true;
-		}
-	}
+        public function init()
+        {
+                $this->dbFields = array(
+                        'enablePages'=>0,
+                        'enablePosts'=>1,
+                        'enableDefaultHomePage'=>0,
+                        'enableMinifyURL'=>1
+                );
+        }
 
-	public function form()
-	{
-		global $Language;
+        function __construct()
+        {
+                parent::__construct();
 
-		$html  = '<div>';
-		$html .= '<input name="enablePages" id="jsenablePages" type="checkbox" value="true" '.($this->getDbField('enablePages')?'checked':'').'>';
-		$html .= '<label class="forCheckbox" for="jsenablePages">'.$Language->get('Enable AddToAny on pages').'</label>';
-		$html .= '</div>';
+                global $Url;
 
-		$html .= '<div>';
-		$html .= '<input name="enablePosts" id="jsenablePosts" type="checkbox" value="true" '.($this->getDbField('enablePosts')?'checked':'').'>';
-		$html .= '<label class="forCheckbox" for="jsenablePosts">'.$Language->get('Enable AddToAny on posts').'</label>';
-		$html .= '</div>';
+                $this->enable = false;
 
-		$html .= '<div>';
-		$html .= '<input name="enableDefaultHomePage" id="jsenableDefaultHomePage" type="checkbox" value="true" '.($this->getDbField('enableDefaultHomePage')?'checked':'').'>';
-		$html .= '<label class="forCheckbox" for="jsenableDefaultHomePage">'.$Language->get('Enable AddToAny on default home page').'</label>';
-		$html .= '</div>';
+                if( $this->getDbField('enablePosts') && ($Url->whereAmI()=='post') ) {
+                        $this->enable = true;
+                }
+                elseif( $this->getDbField('enablePages') && ($Url->whereAmI()=='page') ) {
+                        $this->enable = true;
+                }
+                elseif( $this->getDbField('enableDefaultHomePage') && ($Url->whereAmI()=='home') )
+                {
+                        $this->enable = true;
+                }
+        }
 
-		return $html;
-	}
+        public function form()
+        {
+                global $Language;
 
-	public function postEnd()
-	{
-		if( $this->disable ) {
-			return false;
-		}
+                $html = '<div>';
+                $html .= '<input type="hidden" name="enablePages" value="0">';
+                $html .= '<input name="enablePages" id="jsenablePages" type="checkbox" value="1" '.($this->getDbField('enablePages')?'checked':'').'>';
+                $html .= '<label class="forCheckbox" for="jsenablePages">'.$Language->get('enable-addtoany-on-pages').'</label>';
+                $html .= '</div>';
 
-		$html  = '<!-- AddToAny BEGIN -->
-    <div class="a2a-social" style="margin:20px 0px;">
-    <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
-    <a class="a2a_button_facebook"></a>
-    <a class="a2a_button_twitter"></a>
-    <a class="a2a_button_google_plus"></a>
-    <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
-    </div>
-    </div>
-    <!-- AddToAny END -->';
-		return $html;
-	}
+                $html .= '<div>';
+                $html .= '<input type="hidden" name="enablePosts" value="0">';
+                $html .= '<input name="enablePosts" id="jsenablePosts" type="checkbox" value="1" '.($this->getDbField('enablePosts')?'checked':'').'>';
+                $html .= '<label class="forCheckbox" for="jsenablePosts">'.$Language->get('enable-addtoany-on-posts').'</label>';
+                $html .= '</div>';
 
-	public function pageEnd()
-	{
-		if( $this->disable ) {
-			return false;
-		}
+                $html .= '<div>';
+                $html .= '<input type="hidden" name="enableDefaultHomePage" value="0">';
+                $html .= '<input name="enableDefaultHomePage" id="jsenableDefaultHomePage" type="checkbox" value="1" '.($this->getDbField('enableDefaultHomePage')?'checked':'').'>';
+                $html .= '<label class="forCheckbox" for="jsenableDefaultHomePage">'.$Language->get('enable-addtoany-on-default-home-page').'</label>';
+                $html .= '</div>';
 
-		$html  = '<!-- AddToAny BEGIN -->
-    <div class="a2a-social" style="margin:20px 0px;">
-    <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
-    <a class="a2a_button_facebook"></a>
-    <a class="a2a_button_twitter"></a>
-    <a class="a2a_button_google_plus"></a>
-    <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
-    </div>
-    </div>
-    <!-- AddToAny END -->';
-		return $html;
-	}
-  
-	public function siteHead()
-	{
-		if( $this->disable ) {
-			return false;
-		}
+                $html .= '<div>';
+                $html .= '<input type="hidden" name="enableMinifyURL" value="0">';
+                $html .= '<input name="enableMinifyURL" id="jsenableMinifyURL" type="checkbox" value="1" '.($this->getDbField('enableMinifyURL')?'checked':'').'>';
+                $html .= '<label class="forCheckbox" for="jsenableMinifyURL">'.$Language->get('enable-google-url-shortener').'</label>';
+                $html .= '</div>';
 
-    $html = '<script type="text/javascript" src="//static.addtoany.com/menu/page.js"></script>';
-    
-		return $html;
-	}
+                return $html;
+        }
 
-  // Some themes don't like it in siteBodyEnd
-  
-  /* public function siteBodyEnd()
-	{
-		if( $this->disable ) {
-			return false;
-		}
+        public function postEnd()
+        {
+                if( $this->enable ) {
+                        return $this->a2acode();
+                }
+                return false;
+        }
 
-		$html = '<script type="text/javascript" src="//static.addtoany.com/menu/page.js"></script>';
+        public function pageEnd()
+        {
+                if( $this->enable ) {
+                        return $this->a2acode();
+                }
+                return false;
+        }
 
-		return $html;
-	} */
+        public function siteHead()
+        {
+                if( $this->enable ) {
+                        $html = '<script type="text/javascript" src="//static.addtoany.com/menu/page.js"></script>';
+                        return $html;
+                }
+                return false;
+        }
+
 }
