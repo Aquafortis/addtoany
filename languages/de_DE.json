@@ -1,11 +1,10 @@
 {
-	"plugin-data":
-	{
-		"name": "AddToAny Social Sharing",
-		"description": "AddToAny ist ein Set von Buttons, um Beiträge und Seiten in sozialen Netzwerken zu teilen."
-	},
-	"enable-addtoany-on-pages": "AddToAny auf Seiten",
-	"enable-addtoany-on-posts": "AddToAny bei Beiträgen",
-	"enable-addtoany-on-default-home-page": "AddToAny auf der Hauptseite",
-	"enable-google-url-shortener": "Google-Kurzlink"
+  "plugin-data": {
+    "name": "AddToAny Social Sharing",
+    "description": "AddToAny ist ein Set von Buttons, um Beiträge und Seiten in sozialen Netzwerken zu teilen."
+  },
+  "enable-addtoany-on-pages": "AddToAny auf Seiten",
+  "enable-addtoany-on-posts": "AddToAny bei Beiträgen",
+  "enable-addtoany-on-default-home-page": "AddToAny auf der Hauptseite",
+  "enable-google-url-shortener": "Google-Kurzlink"
 }
